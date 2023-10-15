@@ -1,0 +1,10 @@
+Most apps use an AI for a single task which is called a Narrow AI
+
+AI in most scenarios is used for
+ - Content recommendation
+ - Online Shopping
+ - Online Support
+ - Resource mapping
+ - Waste sorting
+ 
+Brute force should never be used in AI since the current CPUs are not powerful enough to handle the amount of data that is required to be processed.
