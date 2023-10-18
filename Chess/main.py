@@ -78,13 +78,13 @@ chess_grid = [
     [' ', ' ', ' ', ' ', ' ', ' ', 'b', ' '],
     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-    ['p', 'p', 'p', ' ', 'p', 'p', 'p', 'p'], 
+    ['p', 'p', 'p', '', 'p', 'p', 'p', 'p'], 
     ['r', 'n', 'K', 'q', 'k', 'b', 'n', 'r']
 ]
 def invalidGrid(chessGrid, r, c):
     chessGrid[r][c] = '\033[1;32mX'
     chessGrid[r][c+1] = f'\033[0m{chessGrid[r][c+1]}'
-    print('\n'.join(' '.join(str(x) for x in row) for row in chess_grid), "\nInvalid Grid refer to the comment about the grid")
+    print('\n'.join(' '.join("." if x == " " else str(x) for x in row) for row in chess_grid), "\nInvalid Grid refer to the comment about the grid")
 
 for row in range(len(chess_grid)):
     for col in range(len(chess_grid[0])):
