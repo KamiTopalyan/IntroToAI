@@ -70,7 +70,9 @@ def bishop_moves(chess_grid, row, col):
     ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r']
 '''
 
-#change as you wish however ensure that the quotes have a space in them
+# change as you wish however ensure that the quotes have a space in them
+# uppercase is white and lowercase is black
+validLetters = ['R', 'N', 'B', 'Q', 'K', 'P', 'r', 'n', 'b', 'q', 'k', 'p', ' ']
 chess_grid = [
     ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'],
     ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'], 
@@ -81,6 +83,7 @@ chess_grid = [
     ['p', 'p', 'p', '', 'p', 'p', 'p', 'p'], 
     ['r', 'n', 'K', 'q', 'k', 'b', 'n', 'r']
 ]
+
 def invalidGrid(chessGrid, r, c):
     chessGrid[r][c] = '\033[1;32mX'
     chessGrid[r][c+1] = f'\033[0m{chessGrid[r][c+1]}'
@@ -88,7 +91,7 @@ def invalidGrid(chessGrid, r, c):
 
 for row in range(len(chess_grid)):
     for col in range(len(chess_grid[0])):
-        if(chess_grid[row][col] == ""):
+        if(not any(value in chess_grid[row][col] for value in validLetters)):
             invalidGrid(chess_grid, row, col)
             break
         if chess_grid[row][col] == 'b':
