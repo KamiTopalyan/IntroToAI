@@ -56,23 +56,44 @@ def bishop_moves(chess_grid, row, col):
         c -= 1
     return moves
 
+# OG chess grid
+# copy if  needed
+
+'''
+    ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'],
+    ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'], 
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+    ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'], 
+    ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r']
+'''
+
+#change as you wish however ensure that the quotes have a space in them
 chess_grid = [
     ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'],
     ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'], 
-    [' ', '.', ' ', '.', ' ', '.', ' ', '.'],
-    ['.', ' ', '.', ' ', '.', ' ', '.', ' '],
-    [' ', '.', ' ', '.', ' ', '.', ' ', '.'],
-    ['.', ' ', '.', ' ', '.', ' ', '.', ' '],
-    ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'], 
-    ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r']
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+    [' ', ' ', ' ', ' ', ' ', ' ', 'b', ' '],
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+    ['p', 'p', 'p', ' ', 'p', 'p', 'p', 'p'], 
+    ['r', 'n', 'K', 'q', 'k', 'b', 'n', 'r']
 ]
+def invalidGrid(chessGrid, r, c):
+    chessGrid[r][c] = '\033[1;32mX'
+    chessGrid[r][c+1] = f'\033[0m{chessGrid[r][c+1]}'
+    print('\n'.join(' '.join(str(x) for x in row) for row in chess_grid), "\nInvalid Grid refer to the comment about the grid")
 
 for row in range(len(chess_grid)):
     for col in range(len(chess_grid[0])):
+        if(chess_grid[row][col] == ""):
+            invalidGrid(chess_grid, row, col)
+            break
         if chess_grid[row][col] == 'b':
             moves = bishop_moves(chess_grid, row, col)
             for move in moves:
-                print(moves)
                 if chess_grid[move[0]][move[1]] == 'K':
                     print("The white bishop is checking the black king!")
                     break
