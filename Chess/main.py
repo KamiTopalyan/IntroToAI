@@ -4,56 +4,56 @@ def bishop_moves(chess_grid, row, col):
     moves = []
     
     # Check diagonal up-right
-    i, j = row - 1, col + 1
-    while i >= 0 and j < len(chess_grid[0]):
-        if chess_grid[i][j] == ' ':
-            moves.append((i, j))
-        elif chess_grid[i][j].isupper():
-            moves.append((i, j))
+    r, c = row - 1, col + 1
+    while r >= 0 and c < len(chess_grid[0]):
+        if chess_grid[r][c] == ' ':
+            moves.append((r, c))
+        elif chess_grid[r][c].isupper():
+            moves.append((r, c))
             break
         else:
             break
-        i -= 1
-        j += 1
+        r -= 1
+        c += 1
         
     # Check diagonal up-left
-    i, j = row - 1, col - 1
-    while i >= 0 and j >= 0:
-        if chess_grid[i][j] == ' ':
-            moves.append((i, j))
-        elif chess_grid[i][j].isupper():
-            moves.append((i, j))
+    r, c = row - 1, col - 1
+    while r >= 0 and c >= 0:
+        if chess_grid[r][c] == ' ':
+            moves.append((r, c))
+        elif chess_grid[r][c].isupper():
+            moves.append((r, c))
             break
         else:
             break
-        i -= 1
-        j -= 1
+        r -= 1
+        c -= 1
         
     # Check diagonal down-right
-    i, j = row + 1, col + 1
-    while i < len(chess_grid) and j < len(chess_grid[0]):
-        if chess_grid[i][j] == ' ':
-            moves.append((i, j))
-        elif chess_grid[i][j].isupper():
-            moves.append((i, j))
+    r, c = row + 1, col + 1
+    while r < len(chess_grid) and c < len(chess_grid[0]):
+        if chess_grid[r][c] == ' ':
+            moves.append((r, c))
+        elif chess_grid[r][c].isupper():
+            moves.append((r, c))
             break
         else:
             break
-        i += 1
-        j += 1
+        r += 1
+        c += 1
         
     # Check diagonal down-left
-    i, j = row + 1, col - 1
-    while i < len(chess_grid) and j >= 0:
-        if chess_grid[i][j] == ' ':
-            moves.append((i, j))
-        elif chess_grid[i][j].isupper():
-            moves.append((i, j))
+    r, c = row + 1, col - 1
+    while r < len(chess_grid) and c >= 0:
+        if chess_grid[r][c] == ' ':
+            moves.append((r, c))
+        elif chess_grid[r][c].isupper():
+            moves.append((r, c))
             break
         else:
             break
-        i += 1
-        j -= 1
+        r += 1
+        c -= 1
     return moves
 
 chess_grid = [
