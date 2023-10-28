@@ -1,63 +1,4 @@
-
-# @returns a 2d list of all the possible moves for a bishop
-def bishop_moves(chess_grid, row, col):
-    moves = []
-    
-    # Check diagonal up-right
-    r, c = row - 1, col + 1
-    while r >= 0 and c < len(chess_grid[0]):
-        if chess_grid[r][c] == ' ':
-            moves.append((r, c))
-        elif chess_grid[r][c].isupper():
-            moves.append((r, c))
-            break
-        else:
-            break
-        r -= 1
-        c += 1
-        
-    # Check diagonal up-left
-    r, c = row - 1, col - 1
-    while r >= 0 and c >= 0:
-        if chess_grid[r][c] == ' ':
-            moves.append((r, c))
-        elif chess_grid[r][c].isupper():
-            moves.append((r, c))
-            break
-        else:
-            break
-        r -= 1
-        c -= 1
-        
-    # Check diagonal down-right
-    r, c = row + 1, col + 1
-    while r < len(chess_grid) and c < len(chess_grid[0]):
-        if chess_grid[r][c] == ' ':
-            moves.append((r, c))
-        elif chess_grid[r][c].isupper():
-            moves.append((r, c))
-            break
-        else:
-            break
-        r += 1
-        c += 1
-        
-    # Check diagonal down-left
-    r, c = row + 1, col - 1
-    while r < len(chess_grid) and c >= 0:
-        if chess_grid[r][c] == ' ':
-            moves.append((r, c))
-        elif chess_grid[r][c].isupper():
-            moves.append((r, c))
-            break
-        else:
-            break
-        r += 1
-        c -= 1
-    return moves
-
-# OG chess grid
-# copy if  needed
+import moveCalculator
 
 '''
     ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'],
@@ -74,14 +15,14 @@ def bishop_moves(chess_grid, row, col):
 # uppercase is white and lowercase is black
 validLetters = ['R', 'N', 'B', 'Q', 'K', 'P', 'r', 'n', 'b', 'q', 'k', 'p', ' ']
 chess_grid = [
-    ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'],
+    ['R', 'N', 'B', 'Q', ' ', 'B', 'N', 'R'],
     ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'], 
+    [' ', ' ', ' ', ' ', 'r', ' ', 'K', ' '],
+    [' ', ' ', ' ', ' ', ' ', 'q', ' ', 'p'],
+    [' ', ' ', ' ', ' ', ' ', 'n', ' ', ' '],
     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-    [' ', ' ', ' ', ' ', ' ', ' ', 'b', ' '],
-    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-    ['p', 'p', 'p', '', 'p', 'p', 'p', 'p'], 
-    ['r', 'n', 'K', 'q', 'k', 'b', 'n', 'r']
+    ['p', 'p', 'p', ' ', 'p', 'p', 'p', 'p'], 
+    ['r', ' ', ' ', ' ', 'k', 'b', ' ', 'r']
 ]
 
 def invalidGrid(chessGrid, r, c):
@@ -95,8 +36,43 @@ for row in range(len(chess_grid)):
             invalidGrid(chess_grid, row, col)
             break
         if chess_grid[row][col] == 'b':
-            moves = bishop_moves(chess_grid, row, col)
-            for move in moves:
-                if chess_grid[move[0]][move[1]] == 'K':
-                    print("The white bishop is checking the black king!")
-                    break
+            move_sets = []
+            move_sets.append(moveCalculator.diagonal_moves(chess_grid, row, col))
+            for sets in move_sets:
+                for move in sets:
+                    if chess_grid[move[0]][move[1]] == 'K':
+                        print("The white bishop is checking the black king!")
+                        break
+        elif chess_grid[row][col] == 'n':
+            move_sets = []
+            move_sets.append(moveCalculator.L_moves(chess_grid, row, col))
+            for sets in move_sets:
+                for move in sets:
+                    if chess_grid[move[0]][move[1]] == 'K':
+                        print("The white knight is checking the black king!")
+                        break
+        elif chess_grid[row][col] == 'r':
+            move_sets = []
+            move_sets.append(moveCalculator.straight_moves(chess_grid, row, col))
+            for sets in move_sets:
+                for move in sets:
+                    if chess_grid[move[0]][move[1]] == 'K':
+                        print("The white rook is checking the black king!")
+                        break
+        elif chess_grid[row][col] == 'q':
+            move_sets = []
+            move_sets.append(moveCalculator.straight_moves(chess_grid, row, col))
+            move_sets.append(moveCalculator.diagonal_moves(chess_grid, row, col))
+            for sets in move_sets:
+                for move in sets:
+                    if chess_grid[move[0]][move[1]] == 'K':
+                        print("The white queen is checking the black king!")
+                        break
+        elif chess_grid[row][col] == 'p':
+            move_sets = []
+            move_sets.append(moveCalculator.pawn_moves(chess_grid, row, col))
+            for sets in move_sets:
+                for move in sets:
+                    if chess_grid[move[0]][move[1]] == 'K':
+                        print("The white pawn is checking the black king!")
+                        break
