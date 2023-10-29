@@ -1,6 +1,6 @@
 
 # @returns a 2d list of all the possible moves for a bishop
-def diagonal_moves(chess_grid, row, col):
+def diagonal_moves(chess_grid, row, col, isWhite):
     moves = []
     
     # Check diagonal up-right
@@ -8,7 +8,7 @@ def diagonal_moves(chess_grid, row, col):
     while r >= 0 and c < len(chess_grid[0]):
         if chess_grid[r][c] == ' ':
             moves.append((r, c))
-        elif chess_grid[r][c].isupper():
+        elif chess_grid[r][c].isupper() if isWhite else chess_grid[r][c].islower():
             moves.append((r, c))
             break
         else:
@@ -21,7 +21,7 @@ def diagonal_moves(chess_grid, row, col):
     while r >= 0 and c >= 0:
         if chess_grid[r][c] == ' ':
             moves.append((r, c))
-        elif chess_grid[r][c].isupper():
+        elif chess_grid[r][c].isupper() if isWhite else chess_grid[r][c].islower():
             moves.append((r, c))
             break
         else:
@@ -34,7 +34,7 @@ def diagonal_moves(chess_grid, row, col):
     while r < len(chess_grid) and c < len(chess_grid[0]):
         if chess_grid[r][c] == ' ':
             moves.append((r, c))
-        elif chess_grid[r][c].isupper():
+        elif chess_grid[r][c].isupper() if isWhite else chess_grid[r][c].islower():
             moves.append((r, c))
             break
         else:
@@ -47,7 +47,7 @@ def diagonal_moves(chess_grid, row, col):
     while r < len(chess_grid) and c >= 0:
         if chess_grid[r][c] == ' ':
             moves.append((r, c))
-        elif chess_grid[r][c].isupper():
+        elif chess_grid[r][c].isupper() if isWhite else chess_grid[r][c].islower():
             moves.append((r, c))
             break
         else:
@@ -56,7 +56,7 @@ def diagonal_moves(chess_grid, row, col):
         c -= 1
     return moves
 
-def straight_moves(chess_grid, row, col):
+def straight_moves(chess_grid, row, col, isWhite):
     moves = []
     
     #Moves to the right
@@ -64,7 +64,7 @@ def straight_moves(chess_grid, row, col):
     while c < len(chess_grid[0]):
         if chess_grid[r][c] == ' ':
             moves.append((r, c))
-        elif chess_grid[r][c].isupper():
+        elif chess_grid[r][c].isupper() if isWhite else chess_grid[r][c].islower():
             moves.append((r, c))
             break
         else:
@@ -76,7 +76,7 @@ def straight_moves(chess_grid, row, col):
     while c > 0:
         if chess_grid[r][c] == ' ':
             moves.append((r, c))
-        elif chess_grid[r][c].isupper():
+        elif chess_grid[r][c].isupper() if isWhite else chess_grid[r][c].islower():
             moves.append((r, c))
             break
         else:
@@ -88,7 +88,7 @@ def straight_moves(chess_grid, row, col):
     while r > 0:
         if chess_grid[r][c] == ' ':
             moves.append((r, c))
-        elif chess_grid[r][c].isupper():
+        elif chess_grid[r][c].isupper() if isWhite else chess_grid[r][c].islower():
             moves.append((r, c))
             break
         else:
@@ -100,7 +100,7 @@ def straight_moves(chess_grid, row, col):
     while r < len(chess_grid[0]):
         if chess_grid[r][c] == ' ':
             moves.append((r, c))
-        elif chess_grid[r][c].isupper():
+        elif chess_grid[r][c].isupper() if isWhite else chess_grid[r][c].islower():
             moves.append((r, c))
             break
         else:
@@ -108,7 +108,7 @@ def straight_moves(chess_grid, row, col):
         r += 1
     return moves
 
-def L_moves(chess_grid, row, col):
+def L_moves(chess_grid, row, col, isWhite):
     moves = []
     offsets = [
                 (2, 1), (1, 2),
@@ -130,12 +130,36 @@ def L_moves(chess_grid, row, col):
 
     return moves
 
-def pawn_moves(chess_grid, row, col):
+def pawn_moves(chess_grid, row, col, isWhite):
     moves = []
-    if(row == 0): return moves
-    if(row == 6): moves.append((2,0))
-    if (col < len(chess_grid[0]) and chess_grid[row + 1][col + 1].isupper()): moves.append((1,1))
-    if (chess_grid[row + 1][col - 1].isupper() and col > 0): moves.append((1,-1))
-    if chess_grid[row + 1][col] == " ": moves.append((1,0))
-    print(moves)
+    if(isWhite):
+        if(row == 0): return moves
+        if(row == 6 and chess_grid[row - 1][col] == " " and chess_grid[row - 2][col] == " "): moves.append((row-2,col))
+
+        if (col < len(chess_grid[0]) -1  and chess_grid[row - 1][col + 1].isupper()): moves.append((row-1,col+1)) #to the right
+        if (col >= 0 and chess_grid[row - 1][col - 1].isupper()): moves.append((row-1,col-1))# to the left
+        if chess_grid[row - 1][col] == " ": moves.append((row-1,col))
+
+    else:
+        if(row == 8): return moves
+        if(row == 1 and chess_grid[row + 1][col] == " " and chess_grid[row + 2][col] == " "): moves.append((row+2,col))
+
+        if (col < len(chess_grid[0]) - 1  and chess_grid[row + 1][col + 1].islower()): moves.append((row+1,col+1)) #to the right
+        if (col >= 0 and chess_grid[row + 1][col - 1].islower()): moves.append((row+1,col-1))# to the left
+        if chess_grid[row + 1][col] == " ": moves.append((row+1,col))
+
+    return moves
+
+def king_moves(chess_grid, row, col, isWhite):
+    moves = []
+    for r in range(-1,2):
+        for c in range(-1,2):
+            rOffset, cOffset = r + row, c + col
+            if(rOffset < 0 or rOffset >= len(chess_grid)):
+                continue
+            if(cOffset < 0 or cOffset >= len(chess_grid[0])):
+                continue
+            if r == 0 and c == 0: continue
+            if chess_grid[rOffset][cOffset] == " ": moves.append((rOffset, cOffset))
+            elif chess_grid[rOffset][cOffset].isupper() if isWhite else chess_grid[rOffset][cOffset].islower(): moves.append((rOffset, cOffset))
     return moves
