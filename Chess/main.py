@@ -1,5 +1,5 @@
 import moveCalculator
-from copy import copy, deepcopy
+from copy import deepcopy
 '''
     ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'],
     ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'], 
@@ -45,14 +45,17 @@ chess_grid = [
     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
 ]
 
+def printGrid(chess_grid, textToAppend):
+    print('\n'.join(' '.join("." if x == " " else str(x) for x in row) for row in chess_grid), textToAppend)
+
 # checks if grid is invalid
-def invalidGrid(chessGrid, r, c):
-    chessGrid[r][c] = '\033[1;32mX'
-    chessGrid[r][c+1] = f'\033[0m{chessGrid[r][c+1]}'
-    print('\n'.join(' '.join("." if x == " " else str(x) for x in row) for row in chess_grid), "\nInvalid Grid refer to the comment about the grid")
+def invalidGrid(chess_grid: list[list[str]], r: int, c: int) -> None:
+    chess_grid[r][c] = '\033[1;32mX'
+    chess_grid[r][c+1] = f'\033[0m{chess_grid[r][c+1]}'
+    printGrid(chess_grid, "\nInvalid Grid refer to the comment about the grid")
 
 # returns moves for any piece
-def getMoves(piece: str, chess_grid, row, col): 
+def getMoves(piece: str, chess_grid: list[list[validLetters]], row: int, col: int) -> list[tuple[int, int]]: 
     pieceMoves: dict = {
         'b': [moveCalculator.diagonal_moves],
         'n': [moveCalculator.L_moves],
@@ -70,7 +73,7 @@ def getMoves(piece: str, chess_grid, row, col):
     return [f(chess_grid, row, col, piece.islower()) for f in pieceMoves[piece]]
 
 # returns a chessbaord with the move inputted
-def movePiece(chess_grid, row, col, move):
+def movePiece(chess_grid: list[list[str]], row: int, col: int, move: tuple[int, int]) -> list[list[str]]:
     test_grid = deepcopy(chess_grid)
     test_grid[move[0]][move[1]] = test_grid[row][col]
     test_grid[row][col] = " "
@@ -78,17 +81,13 @@ def movePiece(chess_grid, row, col, move):
 
 # returns the moves that can prevent the check
 # TODO: check if the path can be blocked rather than the slot right next to the king
-def prevenationMove(piecePos, blockingPos): 
+def prevenationMove(piecePos: tuple, blockingPos: tuple) -> list[tuple[int, int]]: 
     return [blockingPos, piecePos]
 
 
-def isChecking(chess_grid):
+def isChecking(chess_grid: list[list[str]]) -> dict:
     for row in range(len(chess_grid)):
         for col in range(len(chess_grid[0])):
-            if(not any(value in chess_grid[row][col] for value in validLetters)):
-                invalidGrid(chess_grid, row, col)
-                break
-            
             if(chess_grid[row][col] == " "):
                 continue
             
@@ -108,7 +107,7 @@ def isChecking(chess_grid):
                             "preventationMove": prevenationMove((row, col), (move_sets[i-1][j-1][0], move_sets[i-1][j-1][1])),
                             "piecePos": (row, col)
                         }
-                        
+    # if no check is found          
     return {
         "checkingMove": (),
         "check": False,
@@ -116,8 +115,15 @@ def isChecking(chess_grid):
         "preventationMove": "",
         "piecePos": ""
     }
-# checks if move for the king is safe
-def safeKingMove(chess_grid, row, col, move_sets):
+
+"""
+    This function takes in a chess grid, a row, a column, and a list of moves, and returns
+    a list of safe moves for the king. For every possible move for the king, it creates a
+    new grid and checks to see if the king is in check in the new grid. If the king is not
+    in check, the move is added to the list of safe moves. The function returns the list of
+    safe moves.
+"""
+def safeKingMove(chess_grid: list[list[str]], row: int, col: int, move_sets: list[list[tuple[int, int]]]) -> list[tuple[int, int]]:
     safeMoves = []
     for i in range(len(move_sets)):
         for j in range(len(move_sets[i])):
@@ -127,7 +133,7 @@ def safeKingMove(chess_grid, row, col, move_sets):
                 safeMoves.append(move_sets[i][j])
     return safeMoves
                         
-def isPreventable(chess_grid, kingMoved = False):
+def isPreventable(chess_grid: list[list[str]], kingMoved: bool = False) -> bool:
     isPreventable = False
     check = isChecking(chess_grid)
     if(check["check"] and not kingMoved): # if check is found
@@ -141,8 +147,10 @@ def isPreventable(chess_grid, kingMoved = False):
                 move_sets = getMoves(chess_grid[row][col], chess_grid, row, col) #  find the moves of the piece that (moves are 2d arrays)
                 for i in range(len(move_sets)):
                     for j in range(len(move_sets[i])):
+                        # if the piece is the king and if the king has not moved
                         if(chess_grid[row][col] == "K" and not kingMoved):
-                            if move_sets[i][j] == check["piecePos"]: # if the king can take the piece
+                            # if the king can take the piece
+                            if move_sets[i][j] == check["piecePos"]:
                                 new_grid = movePiece(chess_grid, row, col, move_sets[i][j])
                                 kingMoved = True
                                 test_check = isChecking(new_grid)
@@ -153,22 +161,29 @@ def isPreventable(chess_grid, kingMoved = False):
                                 if(len(safeKingMove(chess_grid, row, col, move_sets)) > 0): # if the king can move to a safe place
                                     for count, safeMove in enumerate(safeKingMove(chess_grid, row, col, move_sets)): # print the outcomes
                                         new_grid = movePiece(chess_grid, row, col, safeMove)
-                                        print('\n'.join(' '.join("." if x == " " else str(x) for x in row) for row in new_grid), f"\nMove {count}\n")
+                                        printGrid(new_grid, f"\nMove {count}\n")
                                     isPreventable = True
-                        
-                        elif move_sets[i][j] in check["preventationMove"] and move_sets[i][j] != check["checkingMove"]: # if the piece can take the checking piece or block it
+                        # if the piece can take the checking piece or block it
+                        elif move_sets[i][j] in check["preventationMove"] and move_sets[i][j] != check["checkingMove"]: 
                             new_grid = movePiece(chess_grid, row, col, safeMove)
                             test_check = isChecking(new_grid)
                             if(not test_check["check"]):
-                                print('\n'.join(' '.join("." if x == " " else str(x) for x in row) for row in new_grid))
-                                print()
+                                printGrid(new_grid, "\n")
                                 isPreventable = True
                             continue
     return isPreventable
+
 def isCheckmate(chess_grid):
+    # if the grid is invalid as in letter are not in the validLetters list
+    for row in range(len(chess_grid)):
+        for col in range(len(chess_grid[0])):
+            if(not any(value in chess_grid[row][col] for value in validLetters)): 
+                invalidGrid(chess_grid, row, col)
+                exit(0)
     if(not isChecking(chess_grid)["check"]):
         return False
     if(isPreventable(chess_grid)):
         return False
     return True
+
 print(isCheckmate(chess_grid))
