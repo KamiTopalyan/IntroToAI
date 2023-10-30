@@ -37,6 +37,7 @@ validLetters = ['R', 'N', 'B', 'Q', 'K', 'P', 'r', 'n', 'b', 'q', 'k', 'p', ' ']
 #DONE: check if a piece taking causes a check
 #DONE: check if the king can move to a safe place
 #DONE: check if the king can be protected 
+#DONE: check if the path can be blocked rather than the slot right next to the king
 chess_grid = [
     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
@@ -75,18 +76,12 @@ def getMoves(piece: str, chess_grid: list[list[validLetters]], row: int, col: in
     }
     return [f(chess_grid, row, col, piece.islower()) for f in pieceMoves[piece]]
 
-# returns a chessbaord with the move inputted
+# returns a chessboard with the move inputted
 def movePiece(chess_grid: list[list[str]], row: int, col: int, move: tuple[int, int]) -> list[list[str]]:
     test_grid = deepcopy(chess_grid)
     test_grid[move[0]][move[1]] = test_grid[row][col]
     test_grid[row][col] = " "
     return test_grid
-
-# returns the moves that can prevent the check
-# DONE: check if the path can be blocked rather than the slot right next to the king
-def prevenationMoves(piecePos: tuple, blockingPos: tuple) -> list[tuple[int, int]]: 
-    return [blockingPos, piecePos]
-
 
 def isChecking(chess_grid: list[list[str]]) -> dict:
     for row, col in product(range(len(chess_grid)), range(len(chess_grid[0]))):
