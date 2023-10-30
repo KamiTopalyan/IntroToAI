@@ -1,5 +1,7 @@
 import moveCalculator
 from copy import deepcopy
+import time
+import os, psutil
 '''
     ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'],
     ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'], 
@@ -181,6 +183,7 @@ def isPreventable(chess_grid: list[list[str]], kingMoved: bool = False) -> bool:
 
 def isCheckmate(chess_grid):
     # if the grid is invalid as in letter are not in the validLetters list
+    
     for row in range(len(chess_grid)):
         for col in range(len(chess_grid[0])):
             if(not any(value in chess_grid[row][col] for value in validLetters)): 
@@ -191,5 +194,11 @@ def isCheckmate(chess_grid):
     if(isPreventable(chess_grid)):
         return False
     return True
+if(__name__ == "__main__"):
+    process = psutil.Process()
+    print()  # in bytes 
+    st = time.time()
+    result = isCheckmate(chess_grid)
+    et = time.time()
+    print(f"Checkmate: {result}\nTime to calculate: {round(((et - st) * 1000), 5)}ms\nMemory: {process.memory_info().rss / 1024 / 1000} MB")
 
-print(isCheckmate(chess_grid))
