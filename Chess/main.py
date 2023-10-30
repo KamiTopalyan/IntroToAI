@@ -196,7 +196,6 @@ def isCheckmate(chess_grid):
     return True
 if(__name__ == "__main__"):
     process = psutil.Process()
-    print()  # in bytes 
     st = time.time()
     result = isCheckmate(chess_grid)
     et = time.time()
