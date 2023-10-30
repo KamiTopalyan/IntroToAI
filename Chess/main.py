@@ -1,3 +1,4 @@
+from itertools import product
 import moveCalculator
 from copy import deepcopy
 import time
@@ -39,12 +40,12 @@ validLetters = ['R', 'N', 'B', 'Q', 'K', 'P', 'r', 'n', 'b', 'q', 'k', 'p', ' ']
 chess_grid = [
     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
-    [' ', ' ', ' ', 'P', 'P', 'P', ' ', ' '],
-    [' ', ' ', ' ', 'P', 'K', 'P', ' ', ' '],
-    [' ', ' ', ' ', 'P', 'P', ' ', ' ', ' '],
+    [' ', ' ', ' ', ' ', ' ', ' ', 'n', ' '],
+    [' ', ' ', ' ', 'q', 'K', ' ', ' ', ' '],
+    [' ', ' ', 'p', ' ', ' ', ' ', ' ', ' '],
     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-    [' ', ' ', ' ', ' ', ' ', 'R', ' ', 'b'], 
-    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'b'], 
+    [' ', ' ', ' ', ' ', 'r', 'r', ' ', ' ']
 ]
 
 def printGrid(chess_grid, textToAppend):
@@ -88,29 +89,27 @@ def prevenationMoves(piecePos: tuple, blockingPos: tuple) -> list[tuple[int, int
 
 
 def isChecking(chess_grid: list[list[str]]) -> dict:
-    for row in range(len(chess_grid)):
-        for col in range(len(chess_grid[0])):
-            if(chess_grid[row][col] == " "):
-                continue
-            
-            if(chess_grid[row][col].isupper()): # if the piece is black
-                continue
+    for row, col in product(range(len(chess_grid)), range(len(chess_grid[0]))):
+        if(chess_grid[row][col] == " "):
+            continue
+        
+        if(chess_grid[row][col].isupper()): # if the piece is black
+            continue
 
-            move_sets = getMoves(chess_grid[row][col], chess_grid, row, col)
-            for i in range(len(move_sets)):
-                for j in range(len(move_sets[i])):
-                    for k in range(len(move_sets[i][j])):
-                        xPos = move_sets[i][j][k][0]
-                        yPos = move_sets[i][j][k][1]
-                        if chess_grid[xPos][yPos] == "K":
-                            move_sets[i][j].append((row, col))
-                            return {
-                                "checkingMove": (xPos , yPos),
-                                "check": True,
-                                "piece": chess_grid[row][col],
-                                "preventationMove": move_sets[i][j],
-                                "piecePos": (row, col)
-                            }
+        move_sets = getMoves(chess_grid[row][col], chess_grid, row, col)
+        for i in range(len(move_sets)):
+            for j in range(len(move_sets[i])):
+                for k in range(len(move_sets[i][j])):
+                    xPos, yPos = move_sets[i][j][k][0], move_sets[i][j][k][1]
+                    if chess_grid[xPos][yPos] == "K":
+                        move_sets[i][j].append((row, col))
+                        return {
+                            "checkingMove": (xPos , yPos),
+                            "check": True,
+                            "piece": chess_grid[row][col],
+                            "preventationMove": move_sets[i][j],
+                            "piecePos": (row, col)
+                        }
     # if no check is found          
     return {
         "checkingMove": (),
@@ -141,63 +140,66 @@ def safeKingMove(chess_grid: list[list[str]], row: int, col: int, move_sets: lis
 def isPreventable(chess_grid: list[list[str]], kingMoved: bool = False) -> bool:
     isPreventable = False
     check = isChecking(chess_grid)
-    if(check["check"] and not kingMoved): # if check is found
-        for row in range(len(chess_grid)):
-            for col in range(len(chess_grid[0])):
-                if(chess_grid[row][col] == " "): # if the piece is empty
-                    continue
-                if(chess_grid[row][col].islower()): # if the piece is white
-                    continue
-                #  find the moves of the piece 
-                # (moves are 3d arrays move type, move direction, move position)
-                move_sets = getMoves(chess_grid[row][col], chess_grid, row, col) 
-                for i in range(len(move_sets)):
-                    for j in range(len(move_sets[i])):
-                        for k in range(len(move_sets[i][j])):
-                            # if the piece is the king and if the king has not moved
-                            if(chess_grid[row][col] == "K" and not kingMoved):
-                                # if the king can take the piece
-                                if move_sets[i][j] == check["piecePos"]:
-                                    new_grid = movePiece(chess_grid, row, col, move_sets[i][j])
-                                    kingMoved = True
-                                    test_check = isChecking(new_grid)
-                                    if(not test_check["check"]):
-                                        isPreventable = True
-                                else: # if the king cant take a piece
-                                    kingMoved = True
-                                    if(len(safeKingMove(chess_grid, row, col, move_sets)) > 0): # if the king can move to a safe place
-                                        for count, safeMove in enumerate(safeKingMove(chess_grid, row, col, move_sets)): # print the outcomes
-                                            new_grid = movePiece(chess_grid, row, col, safeMove)
-                                            printGrid(new_grid, f"\nMove {count}\n")
-                                        isPreventable = True
-                            # if the piece can take the checking piece or block it
+    if(kingMoved): return isPreventable
+    for row, col in product(range(len(chess_grid)), range(len(chess_grid[0]))):
+        if(chess_grid[row][col] == " "): # if the piece is empty
+            continue
+        
+        if(chess_grid[row][col].islower()): # if the piece is white
+            continue
+        
+        #  find the moves of the piece 
+        # (moves are 3d arrays move type, move direction, move position)
+        move_sets = getMoves(chess_grid[row][col], chess_grid, row, col)
+        for moveType in range(len(move_sets)):
+            for moveDirection in range(len(move_sets[moveType])):
+                for movePosition in range(len(move_sets[moveType][moveDirection])):
+                    currentMove = move_sets[moveType][moveDirection][movePosition]
+                    if(chess_grid[row][col] == "K" and not kingMoved):
+                        # if the king can take the piece
+                        if move_sets[moveType][moveDirection] == check["piecePos"]:
+                            new_grid = movePiece(chess_grid, row, col, move_sets[moveType][moveDirection])
+                            kingMoved = True
+                            test_check = isChecking(new_grid)
+                            if(not test_check["check"]):
+                                isPreventable = True
+                        else: # if the king cant take a piece
+                            kingMoved = True
+                            # if the king can move to a safe place
+                            if(len(safeKingMove(chess_grid, row, col, move_sets)) > 0): 
+                                isPreventable = True
+                                # print the outcomes
+                                for count, safeMove in enumerate(safeKingMove(chess_grid, row, col, move_sets)): 
+                                    new_grid = movePiece(chess_grid, row, col, safeMove)
+                                    printGrid(new_grid, f"\nMove {count}\n")
                                 
-                            elif move_sets[i][j][k] in check["preventationMove"] and move_sets[i][j][k] != check["checkingMove"]: 
-                                new_grid = movePiece(chess_grid, row, col, move_sets[i][j][k])
-                                test_check = isChecking(new_grid)
-                                if(not test_check["check"]):
-                                    printGrid(new_grid, "\n")
-                                    isPreventable = True
-                                continue
+                    # if the piece can take the checking piece or block it
+                    elif (currentMove in check["preventationMove"] and currentMove != check["checkingMove"]): 
+                        new_grid = movePiece(chess_grid, row, col, currentMove)
+                        test_check = isChecking(new_grid)
+                        if not test_check["check"] :
+                            printGrid(new_grid, "\n")
+                            isPreventable = True
     return isPreventable
 
 def isCheckmate(chess_grid):
     # if the grid is invalid as in letter are not in the validLetters list
+    for row, col in product(range(len(chess_grid)), range(len(chess_grid[0]))):
+        if(not any(value in chess_grid[row][col] for value in validLetters)): 
+            invalidGrid(chess_grid, row, col)
+            exit(0)
+
+    if not isChecking(chess_grid)["check"] :
+        return False
+
+    if isPreventable(chess_grid):
+        return False
     
-    for row in range(len(chess_grid)):
-        for col in range(len(chess_grid[0])):
-            if(not any(value in chess_grid[row][col] for value in validLetters)): 
-                invalidGrid(chess_grid, row, col)
-                exit(0)
-    if(not isChecking(chess_grid)["check"]):
-        return False
-    if(isPreventable(chess_grid)):
-        return False
     return True
+
 if(__name__ == "__main__"):
     process = psutil.Process()
     st = time.time()
     result = isCheckmate(chess_grid)
     et = time.time()
     print(f"Checkmate: {result}\nTime to calculate: {round(((et - st) * 1000), 5)}ms\nMemory: {process.memory_info().rss / 1024 / 1000} MB")
-

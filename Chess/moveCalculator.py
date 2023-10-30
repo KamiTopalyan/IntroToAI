@@ -1,5 +1,8 @@
 
 # @returns a 2d list of all the possible moves for a bishop
+from itertools import product
+
+
 def diagonal_moves(chess_grid, row, col, isWhite):
     moves = [[], [], [], []]
 
@@ -109,7 +112,7 @@ def straight_moves(chess_grid, row, col, isWhite):
     return moves
 
 def L_moves(chess_grid, row, col, isWhite):
-    moves = []
+    moves = [[]]
     offsets = [
                (2, 1), (1, 2),
                (-2, -1), (-1, -2),
@@ -122,12 +125,13 @@ def L_moves(chess_grid, row, col, isWhite):
             continue
         if(cOffset < 0 or cOffset >= len(chess_grid[0])):
             continue
+
         #if no enemy
         if chess_grid[rOffset][cOffset] == ' ':
-            moves.append((rOffset, cOffset))
+            moves[0].append((rOffset, cOffset))
         # if enemy found
         elif chess_grid[rOffset][cOffset].isupper() if isWhite else chess_grid[rOffset][cOffset].islower():
-            moves.append((rOffset, cOffset))
+            moves[0].append((rOffset, cOffset))
     return moves
 
 def pawn_moves(chess_grid, row, col, isWhite):
@@ -152,16 +156,22 @@ def pawn_moves(chess_grid, row, col, isWhite):
 
 def king_moves(chess_grid, row, col, isWhite):
     moves = [[]]
-    for r in range(-1,2):
-        for c in range(-1,2):
-            rOffset, cOffset = r + row, c + col
-            # if rOffset is out of bounds
-            if(rOffset < 0 or rOffset >= len(chess_grid)):
-                continue
-            # if cOffset is out of bounds
-            if(cOffset < 0 or cOffset >= len(chess_grid[0])):
-                continue
-            # if the space is occupied by one of your own pieces
-            if chess_grid[rOffset][cOffset].isupper() if isWhite else chess_grid[rOffset][cOffset].islower():
-                moves[0].append((rOffset, cOffset))
+    for r, c in product(range(-1,2), range(-1,2)):
+        rOffset, cOffset = r + row, c + col
+        # if rOffset is out of bounds
+        if(rOffset < 0 or rOffset >= len(chess_grid)):
+            continue
+        
+        # if cOffset is out of bounds
+        if(cOffset < 0 or cOffset >= len(chess_grid[0])):
+            continue
+        
+        # if the space is empty
+        if chess_grid[rOffset][cOffset] == ' ':
+            moves[0].append((rOffset, cOffset))
+
+        # if the space is occupied by one of your own pieces
+        elif chess_grid[rOffset][cOffset].isupper() if isWhite else chess_grid[rOffset][cOffset].islower():
+            moves[0].append((rOffset, cOffset))
+        
     return moves
