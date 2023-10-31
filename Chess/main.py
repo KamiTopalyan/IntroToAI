@@ -135,7 +135,6 @@ def safeKingMove(chess_grid: list[list[str]], row: int, col: int, move_sets: lis
 def isPreventable(chess_grid: list[list[str]], kingMoved: bool = False) -> bool:
     isPreventable = False
     check = isChecking(chess_grid)
-    print(check)
     if(kingMoved): return isPreventable
     for row, col in product(range(len(chess_grid)), range(len(chess_grid[0]))):
         if(chess_grid[row][col] == " "): # if the piece is empty
@@ -145,16 +144,16 @@ def isPreventable(chess_grid: list[list[str]], kingMoved: bool = False) -> bool:
             continue
         
         #  find the moves of the piece 
-        # (moves are 3d arrays move type, move direction, move position)
+        # (moves are 3d arrays move type, move path, move position)
         move_sets = getMoves(chess_grid[row][col], chess_grid, row, col)
         for moveType in range(len(move_sets)):
-            for moveDirection in range(len(move_sets[moveType])):
-                for movePosition in range(len(move_sets[moveType][moveDirection])):
-                    currentMove = move_sets[moveType][moveDirection][movePosition]
+            for movePath in range(len(move_sets[moveType])):
+                for movePosition in range(len(move_sets[moveType][movePath])):
+                    currentMove = move_sets[moveType][movePath][movePosition]
                     if(chess_grid[row][col] == "K" and not kingMoved):
                         # if the king can take the piece
-                        if move_sets[moveType][moveDirection] == check["piecePos"]:
-                            new_grid = movePiece(chess_grid, row, col, move_sets[moveType][moveDirection])
+                        if move_sets[moveType][movePath] == check["piecePos"]:
+                            new_grid = movePiece(chess_grid, row, col, move_sets[moveType][movePath])
                             kingMoved = True
                             test_check = isChecking(new_grid)
                             if(not test_check["check"]):
