@@ -39,14 +39,14 @@ validLetters = ['R', 'N', 'B', 'Q', 'K', 'P', 'r', 'n', 'b', 'q', 'k', 'p', ' ']
 #DONE: check if the king can be protected 
 #DONE: check if the path can be blocked rather than the slot right next to the king
 chess_grid = [
+    [' ', ' ', 'P', 'K', ' ', ' ', ' ', 'r'],
+    [' ', ' ', 'P', 'P', 'P', 'n', ' ', ' '], 
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
-    [' ', ' ', ' ', ' ', ' ', ' ', 'n', ' '],
-    [' ', ' ', ' ', 'q', 'K', ' ', ' ', ' '],
-    [' ', ' ', 'p', ' ', ' ', ' ', ' ', ' '],
-    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-    [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'b'], 
-    [' ', ' ', ' ', ' ', 'r', 'r', ' ', ' ']
+    [' ', ' ', ' ', 'R', 'R', ' ', ' ', ' ']
 ]
 
 def printGrid(chess_grid, textToAppend):
@@ -135,6 +135,7 @@ def safeKingMove(chess_grid: list[list[str]], row: int, col: int, move_sets: lis
 def isPreventable(chess_grid: list[list[str]], kingMoved: bool = False) -> bool:
     isPreventable = False
     check = isChecking(chess_grid)
+    print(check)
     if(kingMoved): return isPreventable
     for row, col in product(range(len(chess_grid)), range(len(chess_grid[0]))):
         if(chess_grid[row][col] == " "): # if the piece is empty

@@ -112,7 +112,7 @@ def straight_moves(chess_grid, row, col, isWhite):
     return moves
 
 def L_moves(chess_grid, row, col, isWhite):
-    moves = [[]]
+    moves = []
     offsets = [
                (2, 1), (1, 2),
                (-2, -1), (-1, -2),
@@ -128,34 +128,34 @@ def L_moves(chess_grid, row, col, isWhite):
 
         #if no enemy
         if chess_grid[rOffset][cOffset] == ' ':
-            moves[0].append((rOffset, cOffset))
+            moves.append([(rOffset, cOffset)])
         # if enemy found
         elif chess_grid[rOffset][cOffset].isupper() if isWhite else chess_grid[rOffset][cOffset].islower():
-            moves[0].append((rOffset, cOffset))
+            moves.append([(rOffset, cOffset)])
     return moves
 
 def pawn_moves(chess_grid, row, col, isWhite):
-    moves = [[]]
+    moves = []
     if(isWhite): # if white since whites can only move up the grid
         if(row == 0): return moves
-        if(row == 6 and chess_grid[row - 1][col] == " " and chess_grid[row - 2][col] == " "): moves[0].append((row-2,col))
+        if(row == 6 and chess_grid[row - 1][col] == " " and chess_grid[row - 2][col] == " "): moves[0].append([(row-2,col)])
 
-        if (col < len(chess_grid[0]) -1  and chess_grid[row - 1][col + 1].isupper()): moves[0].append((row-1,col+1)) #to the right
-        if (col >= 0 and chess_grid[row - 1][col - 1].isupper()): moves[0].append((row-1,col-1))# to the left
-        if chess_grid[row - 1][col] == " ": moves[0].append((row-1,col))
+        if (col < len(chess_grid[0]) -1  and chess_grid[row - 1][col + 1].isupper()): moves[0].append([(row-1,col+1)]) #to the right
+        if (col >= 0 and chess_grid[row - 1][col - 1].isupper()): moves[0].append([(row-1,col-1)])# to the left
+        if chess_grid[row - 1][col] == " ": moves[0].append([(row-1,col)])
 
     else: #if black since blacks can only move down the grid
         if(row == 8): return moves
-        if(row == 1 and chess_grid[row + 1][col] == " " and chess_grid[row + 2][col] == " "): moves[0].append((row+2,col))
+        if(row == 1 and chess_grid[row + 1][col] == " " and chess_grid[row + 2][col] == " "): moves.append([(row+2,col)])
 
-        if (col < len(chess_grid[0]) - 1  and chess_grid[row + 1][col + 1].islower()): moves[0].append((row+1,col+1)) #to the right
-        if (col >= 0 and chess_grid[row + 1][col - 1].islower()): moves[0].append((row+1,col-1))# to the left
-        if chess_grid[row + 1][col] == " ": moves[0].append((row+1,col))
+        if (col < len(chess_grid[0]) - 1  and chess_grid[row + 1][col + 1].islower()): moves.append([(row+1,col+1)]) #to the right
+        if (col >= 0 and chess_grid[row + 1][col - 1].islower()): moves.append([(row+1,col-1)])# to the left
+        if chess_grid[row + 1][col] == " ": moves.append([(row+1,col)])
 
     return moves
 
 def king_moves(chess_grid, row, col, isWhite):
-    moves = [[]]
+    moves = []
     for r, c in product(range(-1,2), range(-1,2)):
         rOffset, cOffset = r + row, c + col
         # if rOffset is out of bounds
@@ -168,10 +168,13 @@ def king_moves(chess_grid, row, col, isWhite):
         
         # if the space is empty
         if chess_grid[rOffset][cOffset] == ' ':
-            moves[0].append((rOffset, cOffset))
+            moves.append([(rOffset, cOffset)])
 
         # if the space is occupied by one of your own pieces
-        elif chess_grid[rOffset][cOffset].isupper() if isWhite else chess_grid[rOffset][cOffset].islower():
-            moves[0].append((rOffset, cOffset))
+        elif (
+        (chess_grid[rOffset][cOffset].isupper() and chess_grid[rOffset][cOffset] != "k")
+        if isWhite else
+        (chess_grid[rOffset][cOffset].islower() and chess_grid[rOffset][cOffset] != "K")):
+            moves.append([(rOffset, cOffset)])
         
     return moves
