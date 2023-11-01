@@ -54,8 +54,8 @@ def printGrid(chess_grid, textToAppend):
 
 # checks if grid is invalid
 def invalidGrid(chess_grid: list[list[str]], r: int, c: int) -> None:
-    chess_grid[r][c] = '\033[1;32mX'
-    chess_grid[r][c+1] = f'\033[0m{chess_grid[r][c+1]}'
+    chess_grid[r][c] = '\033[1;32mX' # Color format to make x green
+    chess_grid[r][c+1] = f'\033[0m{chess_grid[r][c+1]}' # color format to reset the color
     printGrid(chess_grid, "\nInvalid Grid refer to the comment about the grid")
 
 # returns moves for any piece
@@ -92,17 +92,17 @@ def isChecking(chess_grid: list[list[str]]) -> dict:
             continue
 
         move_sets = getMoves(chess_grid[row][col], chess_grid, row, col)
-        for i in range(len(move_sets)):
-            for j in range(len(move_sets[i])):
-                for k in range(len(move_sets[i][j])):
-                    xPos, yPos = move_sets[i][j][k][0], move_sets[i][j][k][1]
+        for moveType in range(len(move_sets)):
+            for movePath in range(len(move_sets[moveType])):
+                for movePosition in range(len(move_sets[moveType][movePath])):
+                    xPos, yPos = move_sets[moveType][movePath][movePosition][0],move_sets[moveType][movePath][movePosition][1]
                     if chess_grid[xPos][yPos] == "K":
-                        move_sets[i][j].append((row, col))
+                        move_sets[moveType][movePath].append((row, col))
                         return {
                             "checkingMove": (xPos , yPos),
                             "check": True,
                             "piece": chess_grid[row][col],
-                            "preventationMove": move_sets[i][j],
+                            "preventationMove": move_sets[moveType][movePath],
                             "piecePos": (row, col)
                         }
     # if no check is found          
@@ -123,13 +123,13 @@ def isChecking(chess_grid: list[list[str]]) -> dict:
 """
 def safeKingMove(chess_grid: list[list[str]], row: int, col: int, move_sets: list[list[tuple[int, int]]]) -> list[tuple[int, int]]:
     safeMoves = []
-    for i in range(len(move_sets)):
-        for j in range(len(move_sets[i])):
-            for k in range(len(move_sets[i][j])):
-                new_grid = movePiece(chess_grid, row, col, move_sets[i][j][k])
+    for moveType in range(len(move_sets)):
+        for movePath in range(len(move_sets[moveType])):
+            for movePosition in range(len(move_sets[moveType][movePath])):
+                new_grid = movePiece(chess_grid, row, col, move_sets[moveType][movePath][movePosition])
                 check = isChecking(new_grid)
                 if(not check["check"]):
-                    safeMoves.append(move_sets[i][j][k])
+                    safeMoves.append(move_sets[moveType][movePath][movePosition])
     return safeMoves
                         
 def isPreventable(chess_grid: list[list[str]], kingMoved: bool = False) -> bool:
