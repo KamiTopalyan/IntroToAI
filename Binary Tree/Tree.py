@@ -1,24 +1,24 @@
 class Node:
-    def __init__(self, key, depth = 0):
+    def __init__(self, key, depth = 0, data: dict = None):
         self.key = key
         self.childeren = []
         self.depth = depth
         self.marked = False
-    
+        self.data = data
     
         
    
 class Tree:
-    def newNode(self, key, depth = 0):    
-        return Node(key, depth)
+    def newNode(self, key, depth = 0, data: dict = None):    
+        return Node(key, depth, data)
 
     def append(self, parentNode: Node, node: Node):
         node.depth = parentNode.depth + 1
         parentNode.childeren.append(node)
         return node
     
-    def generateAndAppend(self, parentNode: Node, key):
-        node = self.newNode(key, parentNode.depth + 1)
+    def generateAndAppend(self, parentNode: Node, key, data: dict = None):
+        node = self.newNode(key, parentNode.depth + 1, data)
         parentNode.childeren.append(node)
         return node
     

@@ -9,8 +9,8 @@ Node3 = Tree.append(Node1, Tree.newNode(3))
 Node4 = Tree.append(Node1, Tree.newNode(4))
 Node5 = Tree.append(Node2, Tree.newNode(5))
 Node6 = Tree.append(Node2, Tree.newNode(6))
-Tree.printTree(root)
 
+Tree.printTree(root)
 print()
 
 
