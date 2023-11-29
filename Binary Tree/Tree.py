@@ -17,6 +17,11 @@ class Tree:
         parentNode.childeren.append(node)
         return node
     
+    def generateAndAppend(self, parentNode: Node, key):
+        node = self.newNode(key, parentNode.depth + 1)
+        parentNode.childeren.append(node)
+        return node
+    
     def DFS(self, root: Node):
         if (root == None):
             return;
