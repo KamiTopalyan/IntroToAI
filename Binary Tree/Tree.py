@@ -1,16 +1,16 @@
-class Node:
-    def __init__(self, key, depth = 0, data: dict = None):
-        self.key = key
-        self.childeren = []
-        self.depth = depth
-        self.marked = False
-        self.data = data
+
     
-        
-   
 class Tree:
+    class Node:
+        def __init__(self, key, depth = 0, data: dict = None):
+            self.key = key
+            self.childeren = []
+            self.depth = depth
+            self.marked = False
+            self.data = data
+
     def newNode(self, key, depth = 0, data: dict = None):    
-        return Node(key, depth, data)
+        return self.Node(key, depth, data)
 
     def append(self, parentNode: Node, node: Node):
         node.depth = parentNode.depth + 1
@@ -41,12 +41,16 @@ class Tree:
         q = [root]
         while len(q) > 0:
             node = q.pop(0)
-            if not node.marked:
-                node.marked = True
-                print(f"{node.key}", end=' ')
-                for child in node.childeren:
-                    if not child.marked:
-                        q.append(child)
+            if node.marked:
+                return
+            
+            node.marked = True
+            print(f"{node.key}", end=' ')
+            for child in node.childeren:
+                if not child.marked:
+                    q.append(child)
+                    
+                        
             
     def printTree(self, root: Node):
         if (root == None):
@@ -72,4 +76,17 @@ class Tree:
                 n -= 1
     
             print() # Print new line between two levels
-            
+class Grid:
+    Grid = []
+    class GridSlot:
+        def __init__(self, x, y, iswall):
+            self.pos = (x,y)
+            self.iswall = iswall
+    def append(self, x, y, iswall):
+        self.Grid.append(self.GridSlot(x,y,iswall))
+    
+    def __str__(self):
+        string = ""
+        for x in range(len(self.Grid)):
+            string += f"{self.Grid[x].pos} {self.Grid[x].iswall}\n"
+        return string
