@@ -3,7 +3,7 @@ from Grid import Grid
 from time import sleep
 import sys
 grid1 = Grid()
-grid1.read("Mike.lay")
+grid1.read("Berkeley/layouts/mediumMaze.lay")
 
 def lookAround(Grid: Grid, slot: Grid.GridSlot, visited: list[tuple]) -> list[tuple]:
     x = slot.key[0]
@@ -36,6 +36,7 @@ def generateTreeBFS(Grid: Grid, startPos: tuple):
             node = tree.generateAndAppend(root, move)
             queue.append(node)
             print(Grid.getFinalGrid(tree, visited))
+            sleep(0.0000001)
             if Grid.isTarget(move[1], move[0]):
                 print("Found")
                 return tree
@@ -51,7 +52,7 @@ def DFS(Tree: Tree, Grid: Grid, startPos: tuple, root: Tree.Node, moves: list[tu
         neighbors.append(Tree.Node(move))
     visited.add(root.key)
     for neighbor in neighbors:
-        sleep(0.005)
+        sleep(0.0001)
         visited.add(root.key)
         if(Grid.isTarget(neighbor.key[1], neighbor.key[0])):
             found = True
