@@ -1,24 +1,26 @@
 from Tree import Tree
 from Grid import Grid
 from time import sleep
-
+import sys
 grid1 = Grid()
-grid1.read("Berkeley/layouts/bigMaze.lay")
+grid1.read("Mike.lay")
 
 def lookAround(Grid: Grid, slot: Grid.GridSlot, visited: list[tuple]) -> list[tuple]:
     x = slot.key[0]
     y = slot.key[1]
     moves = []
-    if(not Grid.isWall(x+1,y) and (x+1,y) not in visited):
-        moves.append((x+1,y)) # right
-    if(not Grid.isWall(x-1,y) and (x-1,y) not in visited):
-        moves.append((x-1,y)) # left
-    if(not Grid.isWall(x,y-1) and (x,y-1) not in visited):
-        moves.append((x,y-1) ) # up
-    if(not Grid.isWall(x,y+1) and (x,y+1) not in visited):
-        moves.append((x,y+1)) # down
-
-    return moves
+    try:
+        if(not Grid.isWall(x+1,y) and (x+1,y) not in visited):
+            moves.append((x+1,y)) # right
+        if(not Grid.isWall(x-1,y) and (x-1,y) not in visited):
+            moves.append((x-1,y)) # left
+        if(not Grid.isWall(x,y-1) and (x,y-1) not in visited):
+            moves.append((x,y-1) ) # up
+        if(not Grid.isWall(x,y+1) and (x,y+1) not in visited):
+            moves.append((x,y+1)) # down
+    except IndexError:
+        pass
+    return moves 
 
 def generateTreeBFS(Grid: Grid, startPos: tuple):
     tree = Tree()
@@ -34,37 +36,37 @@ def generateTreeBFS(Grid: Grid, startPos: tuple):
             node = tree.generateAndAppend(root, move)
             queue.append(node)
             print(Grid.getFinalGrid(tree, visited))
-            sleep(0.0005)
             if Grid.isTarget(move[1], move[0]):
                 print("Found")
                 return tree
             visited.append(move)
-    
-def DFS(Tree: Tree, Grid: Grid, startPos: tuple, root: Tree.Node, moves: list[tuple], visited: set[tuple]):
+    print(Grid.getFinalGrid(tree, visited))
+def DFS(Tree: Tree, Grid: Grid, startPos: tuple, root: Tree.Node, moves: list[tuple], visited: set[tuple], found: bool):
     if (root == None):
-        return;
-    
+        sys.exit()
+
     neighbors = []
     moves = lookAround(Grid, root, visited)
     for move in moves:
         neighbors.append(Tree.Node(move))
     visited.add(root.key)
     for neighbor in neighbors:
-        if(Grid.isTarget(neighbor.key[1], neighbor.key[0])):
-            print("Found")
-            return tree
+        sleep(0.005)
         visited.add(root.key)
-        print(Grid.getFinalGrid(Tree, visited))
-        sleep(0.0005)
-
-
-        DFS(Tree, Grid, startPos, neighbor, moves, visited)
+        if(Grid.isTarget(neighbor.key[1], neighbor.key[0])):
+            found = True
+            print(Grid.getFinalGrid(Tree, visited))
+            print("Found")
+            sys.exit()
         
-    
+        print(Grid.getFinalGrid(Tree, visited))
+        DFS(Tree, Grid, startPos, neighbor, moves, visited, found)
+    print(Grid.getFinalGrid(Tree, visited))
+        
+found = False
 tree = Tree()
-visited = set()
-print(grid1.getFinalGrid(DFS(tree, grid1, grid1.startPos, tree.newNode(grid1.startPos), [], visited), visited))
-
+#DFS(tree, grid1, grid1.startPos, tree.newNode(grid1.startPos), [], set(),found)
+generateTreeBFS(grid1, grid1.startPos)
 '''
     A
    / \ 

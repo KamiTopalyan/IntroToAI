@@ -13,7 +13,7 @@ class Grid:
         self.GridVar[x].append(self.GridSlot(x,y,iswall, value))
             
     def read(self, path: str) -> None:
-        f = open(path, "r")
+        f = open(path, "r", encoding='utf-8')
         string = f.read()
         rows = string.splitlines()
         for r in range(len(rows)):
@@ -21,16 +21,18 @@ class Grid:
             for c in range(len(rows[r])):
                 if(rows[r][c] == '%'):
                     self.append(r,c,True, "%")
-                if(rows[r][c] == ' '):
+                elif(rows[r][c] == ' '):
                     self.append(r,c,False, " ")
-                if(rows[r][c] == 'P'):
-                    self.append(r,c,False, "P")
+                elif(rows[r][c] == 'p'):
+                    self.append(r,c,False, "p")
                     self.startPos = (r,c)
                     print(self.startPos)
-                if(rows[r][c] == 'F'):
+                elif(rows[r][c] == 'F'):
                     self.append(r,c,False, "F")
                     self.targetPos = (r,c)
                     print("set Target to ", (r,c))
+                else:
+                    self.append(r,c,True, rows[r][c])
         print(self)
         
     def isWall(self, x, y):
