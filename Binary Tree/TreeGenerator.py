@@ -1,10 +1,11 @@
-import Maze_Reader as reader
-from Tree import Grid, Tree
+from Tree import Tree
+from Grid import Grid
 from time import sleep
-Grid2 = Grid()
-reader.read(Grid2)
 
-def lookAround(Grid: Grid, slot, visited) -> None:
+grid = Grid()
+grid.read("Berkeley/layouts/bigMaze.lay")
+
+def lookAround(Grid: Grid, slot: Grid.GridSlot, visited: list[tuple]) -> None:
     x = slot.key[0]
     y = slot.key[1]
     moves = []
@@ -32,12 +33,11 @@ def generateTree(Grid: Grid, startPos):
         for move in moves:
             node = tree.generateAndAppend(root, move)
             queue.append(node)
-            visited.append(move)
-            print(Grid.getGridWithPos(move))
-            sleep(0.1)
+            print(Grid.getFinalGrid(tree, visited))
+            sleep(0.0005)
             if Grid.isTarget(move[1], move[0]):
                 print("Found")
-                return
-            
+                return tree
+            visited.append(move)
 
-generateTree(Grid2, Grid2.startPos)
+generateTree(grid, grid.startPos)
