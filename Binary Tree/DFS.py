@@ -13,6 +13,13 @@ GeneralTree.append(Node2, root)
 print()
 
 
-GeneralTree.DFS(root)
+GeneralTree.DFSwithStack(root)
 print()
 
+'''
+    0
+   /  \ 
+  1    2
+ / \  / \
+3  4 5   6
+'''

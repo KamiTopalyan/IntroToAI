@@ -21,7 +21,7 @@ class Tree:
         node = self.newNode(key, parentNode.depth + 1, data)
         parentNode.childeren.append(node)
         return node
-    
+
     def DFS(self, root: Node):
         if (root == None):
             return;
@@ -32,7 +32,22 @@ class Tree:
         for child in root.childeren:
             if (child.marked == False):
                 self.DFS(child)
-                
+        
+    def DFSwithStack(self, root: Node):
+        if (root == None):
+            return;
+        
+        stack = [root]
+        while len(stack) > 0:
+            node = stack.pop()
+            if node.marked:
+                return
+            
+            node.marked = True
+            print(f"{node.key}", end=' ')
+            for child in node.childeren:
+                if not child.marked:
+                    stack.append(child)
     def BFS(self, root: Node):
         if (root == None):
             return;

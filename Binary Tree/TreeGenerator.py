@@ -2,25 +2,25 @@ from Tree import Tree
 from Grid import Grid
 from time import sleep
 
-grid = Grid()
-grid.read("Berkeley/layouts/bigMaze.lay")
+grid1 = Grid()
+grid1.read("Berkeley/layouts/bigMaze.lay")
 
-def lookAround(Grid: Grid, slot: Grid.GridSlot, visited: list[tuple]) -> None:
+def lookAround(Grid: Grid, slot: Grid.GridSlot, visited: list[tuple]) -> list[tuple]:
     x = slot.key[0]
     y = slot.key[1]
     moves = []
     if(not Grid.isWall(x+1,y) and (x+1,y) not in visited):
-        moves.append((x+1,y))
+        moves.append((x+1,y)) # right
     if(not Grid.isWall(x-1,y) and (x-1,y) not in visited):
-        moves.append((x-1,y))
+        moves.append((x-1,y)) # left
     if(not Grid.isWall(x,y-1) and (x,y-1) not in visited):
-        moves.append((x,y-1) )
+        moves.append((x,y-1) ) # up
     if(not Grid.isWall(x,y+1) and (x,y+1) not in visited):
-        moves.append((x,y+1))
+        moves.append((x,y+1)) # down
     
     return moves
 
-def generateTree(Grid: Grid, startPos):
+def generateTreeBFS(Grid: Grid, startPos: tuple):
     tree = Tree()
     root = tree.newNode(startPos)
     visited = []
@@ -28,7 +28,7 @@ def generateTree(Grid: Grid, startPos):
     visited.append(startPos)
     queue = [root]
     while len(queue) > 0:
-        root = queue.pop(0) 
+        root = queue.pop(0)
         moves = lookAround(Grid, root, visited)
         for move in moves:
             node = tree.generateAndAppend(root, move)
@@ -39,5 +39,50 @@ def generateTree(Grid: Grid, startPos):
                 print("Found")
                 return tree
             visited.append(move)
+def DFS(Tree: Tree, Grid: Grid, startPos: tuple, root: Tree.Node, moves: list[tuple], visited: set[tuple]):
+    if (root == None):
+        return;
+    
+    neighbors = []
+    moves = lookAround(Grid, root, visited)
+    for move in moves:
+        neighbors.append(Tree.Node(move))
+    visited.add(root.key)
+    for neighbor in neighbors:
+            
+        sleep(1)
+        visited.add(root.key)
+        print(Grid.getFinalGrid(Tree, visited))
+        DFS(Tree, Grid, startPos, neighbor, moves, visited)
+        
+    
+tree = Tree()
+DFS(tree, grid1, grid1.startPos, tree.newNode(grid1.startPos), [], set())
 
-generateTree(grid, grid.startPos)
+'''
+    A
+   / \ 
+  C   D
+ / \ / \
+E   F   G
+   / \
+  H   I
+  
+A -> C -> E -> C -> F -> H -> I -> A -> D -> G
+
+while len(temp)!=0 and temp not in visited
+visited.append(temp)
+temp = temp[n]      OUT OF BOUNDS?
+
+queue = [A]
+visited = set()
+while len(queue) > 0:
+    node = queue.pop()
+    if node not in visited:
+        visited.add(node)
+        moves = lookAround(node)
+        for move in moves:
+            tree.appendNode(node, move)
+            
+A -> C 
+'''
