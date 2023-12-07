@@ -17,7 +17,7 @@ def lookAround(Grid: Grid, slot: Grid.GridSlot, visited: list[tuple]) -> list[tu
         moves.append((x,y-1) ) # up
     if(not Grid.isWall(x,y+1) and (x,y+1) not in visited):
         moves.append((x,y+1)) # down
-    
+
     return moves
 
 def generateTreeBFS(Grid: Grid, startPos: tuple):
@@ -39,6 +39,7 @@ def generateTreeBFS(Grid: Grid, startPos: tuple):
                 print("Found")
                 return tree
             visited.append(move)
+    
 def DFS(Tree: Tree, Grid: Grid, startPos: tuple, root: Tree.Node, moves: list[tuple], visited: set[tuple]):
     if (root == None):
         return;
@@ -49,15 +50,20 @@ def DFS(Tree: Tree, Grid: Grid, startPos: tuple, root: Tree.Node, moves: list[tu
         neighbors.append(Tree.Node(move))
     visited.add(root.key)
     for neighbor in neighbors:
-            
-        sleep(1)
+        if(Grid.isTarget(neighbor.key[1], neighbor.key[0])):
+            print("Found")
+            return tree
         visited.add(root.key)
         print(Grid.getFinalGrid(Tree, visited))
+        sleep(0.0005)
+
+
         DFS(Tree, Grid, startPos, neighbor, moves, visited)
         
     
 tree = Tree()
-DFS(tree, grid1, grid1.startPos, tree.newNode(grid1.startPos), [], set())
+visited = set()
+print(grid1.getFinalGrid(DFS(tree, grid1, grid1.startPos, tree.newNode(grid1.startPos), [], visited), visited))
 
 '''
     A

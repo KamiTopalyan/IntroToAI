@@ -30,7 +30,7 @@ class Grid:
                 if(rows[r][c] == 'F'):
                     self.append(r,c,False, "F")
                     self.targetPos = (r,c)
-                    print("set Traget to ", (r,c))
+                    print("set Target to ", (r,c))
         print(self)
         
     def isWall(self, x, y):
