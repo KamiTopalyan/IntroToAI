@@ -1,22 +1,23 @@
 from Tree import Grid
 # tuple formatimiz uclu --> x,y ve duvar olup olmadigi
-Grid = Grid()
-
-def read(Grid,linelen):
-    y=0
-    x=0
-    f = open("test1.lay", "r")#dosyada verilen maze stringlerini okuyoruz !!!TEK MAZE OLMALI!!!
+def read(Grid: Grid) -> None:
+    f = open("Berkeley/layouts/bigMaze.lay", "r")#dosyada verilen maze stringlerini okuyoruz !!!TEK MAZE OLMALI!!!
     string = f.read()#string olarak saveliyoruz
-    print(string)#test amacli print
-
-    for m in range(len(string)):#x axis
-        if m%linelen==0 and m>0:
-            y+=1
-            x=0
-        if(string[m] == '%'):#duvar mi degil mi
-            Grid.append(x,y,True)#x ve y koodrinatlari, true ise duvar demek ve node kesilecek
-        elif(string[m] == ' '):
-            Grid.append(x,y, False)
-        x+=1
+    rows = string.splitlines()
+    for r in range(len(rows)):
+        Grid.generateRow(1)
+        for c in range(len(rows[r])):
+            if(rows[r][c] == '%'):
+                Grid.append(r,c,True,r, "%")
+            if(rows[r][c] == ' '):
+                Grid.append(r,c,False,r, " ")
+            if(rows[r][c] == 'P'):
+                Grid.append(r,c,False,r, "P")
+                Grid.setStartPos((r,c))
+                print(Grid.startPos)
+            if(rows[r][c] == 'F'):
+                Grid.append(r,c,False,r, "F")
+                Grid.setTargetPos((r,c))
+                print("set Traget to ", (r,c))
     print(Grid)
-read(Grid, 3)
+
